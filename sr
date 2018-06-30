@@ -3,8 +3,13 @@ import os, re, subprocess, argparse
 from glob     import glob
 from tabulate import tabulate
 
+DEFAULT_DIR = '.'
+
 def validate_args():
     pass
+
+def file_filter(file_name):
+    return True
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Quick Search')
@@ -14,9 +19,10 @@ if __name__ == '__main__':
     pargs = parser.parse_args()
 
     validate_args()
-
-    files = [y for x in os.walk('.') for y in glob(os.path.join(x[0], '*'))]
-    selected_files = list(filter(lambda x: re.search(pargs.filepattern[0], x, re.IGNORECASE), files))
+    files = [y for x in os.walk(os.environ.get('SEARCH_ROOT', DEFAULT_DIR))
+               for y in glob(os.path.join(x[0], '*')) if file_filter(y)]
+    selected_files = list(filter(lambda x: re.search(pargs.filepattern[0], x, re.IGNORECASE),
+                                 files))
 
     file_table = [['Index', 'File']] + [[i+1, f] for i, f in enumerate(selected_files)]
 
