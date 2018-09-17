@@ -9,7 +9,11 @@ def validate_args():
     pass
 
 def file_filter(file_name):
-    return True
+    regex_list = [
+        '\.o$'
+    ]
+    return all([not re.search(r, file_name) for r in regex_list])
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Quick Search')
